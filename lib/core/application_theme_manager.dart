@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/configuration/color_palette.dart';
+import 'package:news_app/core/config/color_palette.dart';
 
 class ApplicationThemeManager {
   static ThemeData lightTheme = ThemeData(
@@ -8,7 +8,7 @@ class ApplicationThemeManager {
     appBarTheme: AppBarTheme(
       centerTitle: true,
       titleTextStyle: const TextStyle(
-        fontSize: 25,
+        fontSize: 30,
         fontWeight: FontWeight.normal,
       ),
       backgroundColor: ColorPalette.primaryColor,
@@ -21,8 +21,8 @@ class ApplicationThemeManager {
     textTheme: const TextTheme(
       titleLarge: TextStyle(
         color: Colors.white,
-        fontSize: 25,
-        fontWeight: FontWeight.normal,
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
       ),
       bodyLarge: TextStyle(
         fontFamily: "Poppins",

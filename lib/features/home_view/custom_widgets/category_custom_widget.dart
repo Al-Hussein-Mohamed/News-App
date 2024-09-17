@@ -22,7 +22,7 @@ class CategoryCustomWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
         decoration: BoxDecoration(
-          color: categoryModel.backgroundColor,
+          border: Border.all(color: Colors.white,),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(25),
             topRight: const Radius.circular(25),
@@ -38,16 +38,22 @@ class CategoryCustomWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-                flex: 2,
+                flex: 7,
                 child: Center(
                     child: Image.asset(
                   categoryModel.imagePath,
                 ))),
             Expanded(
+              flex: 2,
               child: Center(
                 child: Text(
                   categoryModel.title,
-                  style: theme.textTheme.titleLarge,
+                  style: const TextStyle(
+                    fontFamily: "Exo",
+                    fontSize: 22,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             )

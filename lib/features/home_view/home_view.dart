@@ -1,9 +1,17 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:news_app/core/application_theme_manager.dart';
-import 'package:news_app/features/drawer_view/drawer_view.dart';
-import 'package:news_app/features/home_view/custom_widgets/category_custom_widget.dart';
+import 'package:news_app/core/config/color_palette.dart';
+import 'package:news_app/data/data_source/api_manager.dart';
+import 'package:news_app/features/home_view/custom_widgets/article_view.dart';
+import 'package:news_app/features/home_view/custom_widgets/category_bottom_sheet.dart';
+import 'package:news_app/features/home_view/custom_widgets/selected_category_view.dart';
 import 'package:news_app/models/category_model.dart';
+
+import '../../models/article_model.dart';
+import '../../models/source_model.dart';
+import 'custom_widgets/tab_item_widget.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -14,119 +22,224 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   CategoryModel? selectedCategory;
+  List<Source> sourcesList = [];
+  List<Article> articleList = [];
+  bool isBottomSheetOpened = false;
+  int sourceIdx = 0;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showCategoryBottomSheet(context);
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final _scaffoldKey = new GlobalKey<ScaffoldState>();
     var lang = AppLocalizations.of(context)!;
     var theme = Theme.of(context);
     var mediaQuery = MediaQuery.of(context);
     var screenHeight = mediaQuery.size.height;
     var screenWidth = mediaQuery.size.width;
 
-    List<CategoryModel> categoryModelList = [
-      CategoryModel(
-        id: "sport",
-        title: lang.sports,
-        imagePath: "assets/icons/ball.png",
-        backgroundColor: const Color(0xFFC91C22),
-      ),
-      CategoryModel(
-        id: "politics",
-        title: lang.politics,
-        imagePath: "assets/icons/Politics.png",
-        backgroundColor: const Color(0xFF003E90),
-      ),
-      CategoryModel(
-        id: "health",
-        title: lang.health,
-        imagePath: "assets/icons/health.png",
-        backgroundColor: const Color(0xFFED1E79),
-      ),
-      CategoryModel(
-        id: "business",
-        title: lang.business,
-        imagePath: "assets/icons/bussines.png",
-        backgroundColor: const Color(0xFFCF7E48),
-      ),
-      CategoryModel(
-        id: "environment",
-        title: lang.environment,
-        imagePath: "assets/icons/environment.png",
-        backgroundColor: const Color(0xFF4882CF),
-      ),
-      CategoryModel(
-        id: "science",
-        title: lang.science,
-        imagePath: "assets/icons/science.png",
-        backgroundColor: const Color(0xFFF2D352),
-      ),
-    ];
-
     return Container(
+      // padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: Colors.black,
         image: DecorationImage(
           image: AssetImage("assets/images/pattern.png"),
           fit: BoxFit.cover,
         ),
       ),
       child: Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: selectedCategory == null
-              ? Text(lang.newsApp)
-              : Text(selectedCategory!.title),
-          leading: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: IconButton(
-                  onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-                  icon: const Icon(
-                    Icons.menu_rounded,
-                  ))),
-        ),
-        drawer: DrawerView(categoryDrawBarOnClicked,),
-        body: selectedCategory == null ? Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: screenWidth * .075, vertical: screenHeight * .04),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                lang.pickYourCategoryOfInterest,
-                style: theme.textTheme.bodyLarge,
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              Expanded(
-                child: GridView.builder(
-                  itemCount: categoryModelList.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                  ),
-                  itemBuilder: (context, index) => CategoryCustomWidget(
-                    index: index,
-                    categoryModel: categoryModelList[index],
-                    categoryOnClicked: categoryOnClicked,
+        body: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Stack(
+              children: [
+                SizedBox(
+                  height: screenHeight,
+                  width: screenWidth,
+                ),
+                if (articleList.isNotEmpty)
+                  AnimatedPositioned(
+                      height: screenHeight - 65 - 70,
+                      width: screenWidth,
+                      top: isBottomSheetOpened ? 600 : 50,
+                      curve: Curves.easeInOut,
+                      duration: const Duration(milliseconds: 600),
+                      child: ArticleView(
+                        articleList: articleList,
+                      )),
+                Container(
+                  width: screenWidth,
+                  height: 110,
+                  color: Colors.black.withOpacity(.8),
+                ),
+                Positioned(
+                  bottom: 0,
+                  height: 145,
+                  width: screenWidth,
+                  child: Container(
+                    color: Colors.black.withOpacity(.8),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ) : Text(selectedCategory!.title),
+                Positioned(
+                  width: screenWidth,
+                  bottom: 20,
+                  child: Column(
+                    children: [
+                      if (selectedCategory != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: DefaultTabController(
+                            length: sourcesList.length,
+                            child: TabBar(
+                              isScrollable: true,
+                              dividerColor: Colors.transparent,
+                              indicator: const BoxDecoration(),
+                              labelPadding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                              tabAlignment: TabAlignment.start,
+                              onTap: (value) {
+                                sourceIdx = value;
+                                setState(() {
+                                  articleList.clear();
+                                });
+                                loadArticleList(
+                                    sourcesList[sourceIdx].id, null);
+                              },
+                              tabs: sourcesList
+                                  .map(
+                                    (e) => TabItemWidget(
+                                      source: e,
+                                      isSelected:
+                                          sourceIdx == sourcesList.indexOf(e),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ),
+                        ),
+                      Container(
+                        width: screenWidth - 20,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: ColorPalette.primaryColor,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: Image.asset(
+                                "assets/icons/settings.png",
+                                scale: 1.2,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () => showCategoryBottomSheet(context),
+                              icon: Image.asset(
+                                "assets/icons/selectCategory.png",
+                                scale: 1.2,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: Image.asset(
+                                "assets/icons/search.png",
+                                scale: 1.2,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                AnimatedPositioned(
+                  width: isBottomSheetOpened ? 160 : 120,
+                  top: isBottomSheetOpened ? 50 : 45,
+                  left: isBottomSheetOpened ? screenWidth / 2 - 80 : 25,
+                  curve: Curves.easeInOut,
+                  duration: const Duration(milliseconds: 600),
+                  child: Image.asset(
+                    "assets/icons/homeLogo.png",
+                  ),
+                ),
+                AnimatedPositioned(
+                  top: isBottomSheetOpened ? -100 : 65,
+                  right: isBottomSheetOpened ? 25 : 25,
+                  curve: Curves.easeInOut,
+                  duration: const Duration(milliseconds: 600),
+                  child: Text(
+                    selectedCategory?.title ?? "",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontFamily: "Poppins",
+                      fontSize: 25,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  void categoryOnClicked(CategoryModel categoryModel) {
-    setState(() => selectedCategory = categoryModel);
+  Future<void> showCategoryBottomSheet(BuildContext context) async {
+    final AnimationController animationController = AnimationController(
+      vsync: Navigator.of(context),
+      // Ensures animations sync with the app's frame rate
+      duration: const Duration(
+          milliseconds: 600), // Slows down the animation (2 seconds)
+    );
+
+    setState(() => isBottomSheetOpened = true);
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      barrierColor: Colors.transparent,
+      backgroundColor: ColorPalette.primaryColor,
+      transitionAnimationController: animationController,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(50),
+          topRight: Radius.circular(50),
+        ),
+      ),
+      builder: (context) => CategoryBottomSheet(
+        categoryOnClicked: categoryOnClicked,
+      ),
+    ).then(
+      (value) => setState(
+        () => isBottomSheetOpened = false,
+      ),
+    );
   }
 
-  void categoryDrawBarOnClicked() {
-    setState(() => selectedCategory = null);
+  Future<void> categoryOnClicked(CategoryModel categoryModel) async {
+    Navigator.pop(context);
+    selectedCategory = categoryModel;
+    isBottomSheetOpened = false;
+    await loadSourcesList(categoryModel.id);
+    sourceIdx = 0;
+    await loadArticleList(sourcesList[0].id, null);
+  }
+
+  loadSourcesList(String id) async {
+    sourcesList = await ApiManager.fetchSourcesList(id);
+  }
+
+  loadArticleList(String? sourceID, String? q) async {
+    articleList = await ApiManager.fetchArticleList(sourceID, q);
+    setState(() {});
   }
 }

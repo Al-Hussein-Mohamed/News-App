@@ -25,7 +25,7 @@ class _SplashViewState extends State<SplashView> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-          color: Colors.white,
+          color: Colors.black,
           image: DecorationImage(
             image: AssetImage("assets/images/pattern.png"),
             fit: BoxFit.cover,

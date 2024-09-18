@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/core/config/color_palette.dart';
 
 import '../../../models/category_model.dart';
 
@@ -17,47 +18,60 @@ class CategoryCustomWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    return InkWell(
-      onTap: () => categoryOnClicked!(categoryModel),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.white,),
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(25),
-            topRight: const Radius.circular(25),
-            bottomLeft: index.isEven
-                ? const Radius.circular(25)
-                : const Radius.circular(0),
-            bottomRight: index.isOdd
-                ? const Radius.circular(25)
-                : const Radius.circular(0),
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(.2),
+        border: Border.all(color: Colors.black.withOpacity(.15),),
+        borderRadius: BorderRadius.only(
+          topLeft: const Radius.circular(25),
+          topRight: const Radius.circular(25),
+          bottomLeft: index.isEven
+              ? const Radius.circular(25)
+              : const Radius.circular(0),
+          bottomRight: index.isOdd
+              ? const Radius.circular(25)
+              : const Radius.circular(0),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-                flex: 7,
+      ),
+      child: InkWell(
+        onTap: () => categoryOnClicked!(categoryModel),
+        borderRadius: BorderRadius.only(
+          topLeft: const Radius.circular(25),
+          topRight: const Radius.circular(25),
+          bottomLeft: index.isEven
+              ? const Radius.circular(25)
+              : const Radius.circular(0),
+          bottomRight: index.isOdd
+              ? const Radius.circular(25)
+              : const Radius.circular(0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                  flex: 7,
+                  child: Center(
+                      child: Image.asset(
+                    categoryModel.imagePath,
+                  ))),
+              Expanded(
+                flex: 2,
                 child: Center(
-                    child: Image.asset(
-                  categoryModel.imagePath,
-                ))),
-            Expanded(
-              flex: 2,
-              child: Center(
-                child: Text(
-                  categoryModel.title,
-                  style: const TextStyle(
-                    fontFamily: "Exo",
-                    fontSize: 22,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white,
+                  child: Text(
+                    categoryModel.title,
+                    style: const TextStyle(
+                      fontFamily: "Exo",
+                      fontSize: 22,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

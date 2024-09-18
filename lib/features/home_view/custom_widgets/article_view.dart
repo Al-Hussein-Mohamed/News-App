@@ -1,22 +1,27 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
-import '../../../core/config/color_palette.dart';
-import '../../../data/data_source/api_manager.dart';
 import '../../../models/article_model.dart';
 import 'article_item_widget.dart';
 
 class ArticleView extends StatelessWidget {
   final List<Article> articleList;
-  ArticleView({super.key, required this.articleList});
+  final void Function(int)? articleOnClicked;
+
+  ArticleView({
+    super.key,
+    required this.articleList,
+    required this.articleOnClicked,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: ListView.builder(
-        itemBuilder: (context, index) =>
-            ArticleItemWidget(article: articleList[index],),
+        itemBuilder: (context, index) => ArticleItemWidget(
+          idx: index,
+          article: articleList[index],
+          articleOnClicked: articleOnClicked,
+        ),
         itemCount: articleList.length,
       ),
     );

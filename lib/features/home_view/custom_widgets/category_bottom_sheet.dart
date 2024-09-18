@@ -60,7 +60,7 @@ class CategoryBottomSheet extends StatelessWidget {
         Container(
           height: screenHeight * .8,
           width: screenWidth,
-          padding: const EdgeInsets.only(left: 30, right: 30, top: 30, bottom: 40),
+          padding: const EdgeInsets.only(left: 25, right: 25, top: 30, bottom: 20),
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(100),
@@ -95,8 +95,8 @@ class CategoryBottomSheet extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    mainAxisSpacing: 22,
-                    crossAxisSpacing: 22,
+                    mainAxisSpacing: 17,
+                    crossAxisSpacing: 17,
                   ),
                   itemBuilder: (context, index) => CategoryCustomWidget(
                     index: index,

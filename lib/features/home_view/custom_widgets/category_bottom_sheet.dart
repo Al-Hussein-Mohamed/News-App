@@ -68,9 +68,11 @@ class CategoryBottomSheet extends StatelessWidget {
             ),
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                "Categories",
+                lang.categories,
+                textAlign: TextAlign.center,
                 style: theme.textTheme.titleLarge
                     ?.copyWith(fontSize: 33, fontFamily: "Poppins"),
               ),
@@ -78,7 +80,8 @@ class CategoryBottomSheet extends StatelessWidget {
                 height: 10,
               ),
               Text(
-                "Pick your category of interest",
+                lang.pickYourCategoryOfInterest,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: "Poppins",
                   fontSize: 17,

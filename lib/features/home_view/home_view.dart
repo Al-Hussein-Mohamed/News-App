@@ -11,9 +11,11 @@ import 'package:news_app/features/home_view/custom_widgets/category_bottom_sheet
 import 'package:news_app/features/navigation_bar/navigation_bar.dart';
 import 'package:news_app/features/navigation_bar/source_tab_bar.dart';
 import 'package:news_app/models/category_model.dart';
+import 'package:news_app/view_model/article_view_model.dart';
 
 import '../../models/article_model.dart';
 import '../../models/source_model.dart';
+import '../../view_model/source_view_model.dart';
 import 'custom_widgets/tab_item_widget.dart';
 
 class HomeView extends StatefulWidget {
@@ -24,11 +26,20 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  List<Article> articleList = [];
+  late SourceViewModel sourceViewModel;
+  late ArticleViewModel articleViewModel;
+
   bool isBottomSheetOpened = false;
   bool isArticleOpened = false;
   bool isCategoryChanged = false;
   CategoryModel? selectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    sourceViewModel = SourceViewModel();
+    articleViewModel = ArticleViewModel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,23 +64,27 @@ class _HomeViewState extends State<HomeView> {
               height: screenHeight,
               width: screenWidth,
             ),
-            if (articleList.isNotEmpty)
+              if(selectedCategory != null)
               BodyContent(
+                articleViewModel: articleViewModel,
                 isBottomSheetOpened: isBottomSheetOpened,
-                articleList: articleList,
+                isArticleOpened: isArticleOpened,
                 update: update,
               ),
 
             SourceTabBar(
               update: update,
+              sourceViewModel: sourceViewModel,
+              articleViewModel: articleViewModel,
               selectedCategory: selectedCategory,
-              loadArticleList: loadArticleList,
               isArticleOpened: isArticleOpened,
               isBottomSheetOpened: isBottomSheetOpened,
               isCategoryChanged: isCategoryChanged,
             ),
+
             CustomNavigationBar(
-              loadArticleList: loadArticleList,
+              sourceViewModel: sourceViewModel,
+              articleViewModel: articleViewModel,
               update: update,
               isArticleOpened: isArticleOpened,
               isBottomSheetOpened: isBottomSheetOpened,
@@ -109,11 +124,6 @@ class _HomeViewState extends State<HomeView> {
         ),
       ),
     );
-  }
-
-  loadArticleList(String? sourceID, String? q) async {
-    articleList = await ApiManager.fetchArticleList(sourceID, q);
-    setState(() {});
   }
 
   void update(

@@ -5,6 +5,16 @@ class ApplicationThemeManager {
   static ThemeData lightTheme = ThemeData(
     fontFamily: "Exo",
     scaffoldBackgroundColor: Colors.transparent,
+      colorScheme: const ColorScheme.light(
+        primary: Colors.black,  // Primary color for dialogs, buttons, etc.
+        onPrimary: Colors.white, // Text color on top of primary color
+        secondary: Colors.white,  // Secondary color for FAB, etc.
+        onSecondary: Colors.black, // Text color on top of secondary color
+        surface: Colors.white, // Background color of cards, dialogs, etc.
+        onSurface: Colors.black, // Text color on surfaces
+        error: Colors.red,  // Color for errors
+        onError: Colors.white, // Text color on error backgrounds
+      ),
     appBarTheme: AppBarTheme(
       centerTitle: true,
       titleTextStyle: const TextStyle(

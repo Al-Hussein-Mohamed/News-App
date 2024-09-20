@@ -1,6 +1,6 @@
 {
   "newsApp": "News App",
-  "pickYourCategoryOfInterest": "Pick your category \nof interest",
+  "pickYourCategoryOfInterest": "Pick your categoryofinterest",
   "sports": "Sports",
   "politics": "Politics",
   "health": "Health",
@@ -8,5 +8,8 @@
   "environment": "Env.",
   "science": "Science",
   "category": "Category",
-  "settings": "Settings"
+  "settings": "Settings",
+  "language": "Language",
+  "done": "Done",
+  "categories": "Categories"
 }

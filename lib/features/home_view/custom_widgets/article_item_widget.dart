@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart'; // Add the shimmer package
 
-import '../../../core/utils.dart';
+import '../../../utils/utils.dart';
 import '../../../models/article_model.dart';
 
 class ArticleItemWidget extends StatelessWidget {

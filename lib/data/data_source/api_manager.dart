@@ -14,6 +14,7 @@ class ApiManager {
       {
         "apiKey": Constants.apiKey,
         "category": categoryID,
+        // "language": lang
       },
     );
     final response = await http.get(url);

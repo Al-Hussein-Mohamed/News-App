@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/core/config/color_palette.dart';
+import 'package:provider/provider.dart';
 
+import '../../../core/settings_provider.dart';
 import '../../../models/category_model.dart';
 
 class CategoryCustomWidget extends StatelessWidget {
@@ -17,18 +19,21 @@ class CategoryCustomWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<SettingsProvider>(context);
     var theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(.2),
+        color: Colors.black.withOpacity(.3),
         border: Border.all(color: Colors.black.withOpacity(.15),),
         borderRadius: BorderRadius.only(
           topLeft: const Radius.circular(25),
           topRight: const Radius.circular(25),
-          bottomLeft: index.isEven
+
+
+          bottomLeft: (provider.isEn() ? index.isEven : index.isOdd)
               ? const Radius.circular(25)
               : const Radius.circular(0),
-          bottomRight: index.isOdd
+          bottomRight: (provider.isEn() ? index.isOdd : index.isEven)
               ? const Radius.circular(25)
               : const Radius.circular(0),
         ),

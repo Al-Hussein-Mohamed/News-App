@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:news_app/core/config/color_palette.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../../core/utils.dart';
+import '../../../utils/utils.dart';
 import '../../../models/article_model.dart';
 
 class ArticleDetailsView extends StatelessWidget {

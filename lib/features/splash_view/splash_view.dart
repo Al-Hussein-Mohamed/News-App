@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../core/page_route_names.dart';
+import '../../core/config/page_route_names.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});

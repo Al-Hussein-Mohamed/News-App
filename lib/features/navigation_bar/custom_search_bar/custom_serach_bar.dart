@@ -25,6 +25,7 @@ class _SearchBarState extends State<CustomSearchBar> {
   String content = "";
   bool valid = true;
 
+
   @override
   void initState() {
     super.initState();

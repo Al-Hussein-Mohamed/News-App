@@ -1,38 +1,22 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:news_app/features/article/article_manager/article_cubit.dart';
+import 'package:news_app/features/home/home_manager/home_cubit.dart';
 import 'package:news_app/features/navigation_bar/custom_search_bar/custom_serach_bar.dart';
 import 'package:news_app/features/navigation_bar/settings/settings_bottom_sheet.dart';
+import 'package:news_app/features/title/title_manager/title_cubit.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/config/color_palette.dart';
-import '../../data/data_source/api_manager.dart';
+import '../../core/config/constants.dart';
 import '../../models/category_model.dart';
-import '../../models/source_model.dart';
-import '../../view_model/article_view_model.dart';
-import '../../view_model/source_view_model.dart';
-import '../home_view/custom_widgets/category_bottom_sheet.dart';
-import '../home_view/custom_widgets/tab_item_widget.dart';
+import '../source_bar/source_manager/source_cubit.dart';
+import 'category_bottom_sheet/category_bottom_sheet_view/category_bottom_sheet.dart';
 
 class CustomNavigationBar extends StatefulWidget {
-  final SourceViewModel sourceViewModel;
-  final ArticleViewModel articleViewModel;
-
-  final Function(
-      {CategoryModel? categoryModel,
-      bool? bottomSheetOpen,
-      bool? articleOpen,
-      bool? categoryChanged}) update;
-  bool isBottomSheetOpened;
-  bool isArticleOpened;
-
-  CustomNavigationBar({
+  const CustomNavigationBar({
     super.key,
-    required this.articleViewModel,
-    required this.sourceViewModel,
-    required this.update,
-    required this.isArticleOpened,
-    required this.isBottomSheetOpened,
   });
 
   @override
@@ -53,11 +37,12 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
     var mediaQuery = MediaQuery.of(context);
     var screenHeight = mediaQuery.size.height;
     var screenWidth = mediaQuery.size.width;
+    var homeCubit = Provider.of<HomeCubit>(context);
 
     return AnimatedPositioned(
       curve: Curves.easeInOut,
       right: 15,
-      bottom: widget.isBottomSheetOpened ? 15 - 100 : 15,
+      bottom: homeCubit.isCategorySheetOpened ? 15 - 100 : 15,
       duration: const Duration(milliseconds: 700),
       child: Container(
         width: screenWidth - 30,
@@ -97,14 +82,15 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
   }
 
   Future<void> showCategoryBottomSheet(BuildContext context) async {
+    var homeCubit = context.read<HomeCubit>();
+
     final AnimationController animationController = AnimationController(
       vsync: Navigator.of(context),
       // Ensures animations sync with the app's frame rate
-      duration: const Duration(
-          milliseconds: 1000), // Slows down the animation (2 seconds)
+      duration: Constants.duration,
     );
 
-    widget.update(bottomSheetOpen: true);
+    homeCubit.openCategorySheet();
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -120,36 +106,34 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
       builder: (context) => CategoryBottomSheet(
         categoryOnClicked: categoryOnClicked,
       ),
-    ).then((_) => widget.update(bottomSheetOpen: false));
+    ).then((_) => homeCubit.closeCategorySheet());
   }
 
   Future<void> categoryOnClicked(CategoryModel categoryModel) async {
     Navigator.pop(context);
-    widget.sourceViewModel.fetchSourcesList(categoryModel.id).then(
-          (value) => widget.articleViewModel
-              .fetchArticleList(widget.sourceViewModel.sourcesList[0].id, null),
-        );
+    var homeCubit = context.read<HomeCubit>();
+    var titleCubit = context.read<TitleCubit>();
+    var sourceCubit = SourceCubit.get(context);
+    var articleCubit = ArticleCubit.get(context);
 
-    widget.isBottomSheetOpened = false;
-    widget.update(
-        categoryModel: categoryModel,
-        categoryChanged: true,
-        bottomSheetOpen: false,
-        articleOpen: false);
+    titleCubit.title = categoryModel.title;
+    articleCubit.loading();
+    sourceCubit.fetchSourcesList(categoryModel.id, true);
+    homeCubit.isSearch = false;
+    homeCubit.selectedCategory = categoryModel;
+    homeCubit.closeCategorySheet();
   }
 
   Future<void> showSettingsBottomSheet(BuildContext context) async {
     final AnimationController animationController = AnimationController(
       vsync: Navigator.of(context),
       // Ensures animations sync with the app's frame rate
-      duration: const Duration(
-          milliseconds: 800), // Slows down the animation (2 seconds)
+      duration: Constants.duration,
     );
 
     // widget.update(bottomSheetOpen: true);
     await showModalBottomSheet(
       context: context,
-      // isScrollControlled: true,
       barrierColor: Colors.black.withOpacity(.8),
       backgroundColor: ColorPalette.primaryColor,
       transitionAnimationController: animationController,
@@ -159,7 +143,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
           topRight: Radius.circular(50),
         ),
       ),
-      builder: (context) => SettingsBottomSheet(),
+      builder: (context) => const SettingsBottomSheet(),
     );
     // .then((_) => widget.update(bottomSheetOpen: false));
   }
@@ -167,9 +151,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
   Future<void> showSearchBar(BuildContext context) async {
     showDialog(
       context: context,
-      builder: (context) => CustomSearchBar(
-        articleViewModel: widget.articleViewModel,
-      ),
+      builder: (context) => const CustomSearchBar(),
     );
   }
 }

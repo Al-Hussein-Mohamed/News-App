@@ -4,19 +4,20 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/core/config/color_palette.dart';
+import 'package:news_app/core/config/page_route_names.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../../utils/utils.dart';
-import '../../../models/article_model.dart';
+import '../../../../utils/utils.dart';
+import '../../../../models/article_model.dart';
 
 class ArticleDetailsView extends StatelessWidget {
   final Article article;
-  final VoidCallback? closeArticle;
+  final Function(BuildContext) closeArticle;
 
   const ArticleDetailsView({
     super.key,
     required this.article,
-    this.closeArticle,
+    required this.closeArticle,
   });
 
   @override
@@ -31,7 +32,8 @@ class ArticleDetailsView extends StatelessWidget {
       onPanUpdate: (details) {
         if (details.delta.dx > 10) { // Increase threshold if needed
           // Swipe right detected
-          closeArticle?.call(); // Call the closeArticle function
+          closeArticle(context);
+          // closeArticle.call(context);
         }
       },
       child: Container(
@@ -124,7 +126,7 @@ class ArticleDetailsView extends StatelessWidget {
                           Material(
                             borderRadius: BorderRadius.circular(25),
                             child: InkWell(
-                              onTap: closeArticle,
+                              onTap: () => closeArticle(context),
                               borderRadius: BorderRadius.circular(25),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
@@ -139,16 +141,20 @@ class ArticleDetailsView extends StatelessWidget {
                             ),
                           ),
                           InkWell(
-                            child: Row(
-                              children: [
-                                Text(
-                                  "View Full Article ",
-                                  style: theme.textTheme.displayMedium?.copyWith(
-                                    color: Colors.white,
+                            onTap: () => Navigator.pushNamed(context, PageRouteNames.web, arguments: article.url),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "View Full Article ",
+                                    style: theme.textTheme.displayMedium?.copyWith(
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ),
-                                Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 16,),
-                              ],
+                                  const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 16,),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -162,5 +168,8 @@ class ArticleDetailsView extends StatelessWidget {
         ),
       ),
     );
+
   }
+
+
 }

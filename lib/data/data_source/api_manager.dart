@@ -7,13 +7,14 @@ import '../../models/article_model.dart';
 import '../../models/source_model.dart';
 
 class ApiManager {
-  static Future<List<Source>> fetchSourcesList(String categoryID) async {
+  static Future<List<Source>> fetchSourcesList(String? categoryID) async {
     final url = Uri.https(
       Constants.domain,
       "/v2/top-headlines/sources",
       {
         "apiKey": Constants.apiKey,
-        "category": categoryID,
+        if(categoryID != null)
+          "category": categoryID,
         // "language": lang
       },
     );

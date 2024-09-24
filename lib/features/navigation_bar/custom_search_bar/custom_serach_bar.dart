@@ -1,13 +1,17 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:news_app/view_model/article_view_model.dart';
+import 'package:provider/provider.dart';
+
+import '../../../core/config/constants.dart';
+import '../../article/article_manager/article_cubit.dart';
+import '../../home/home_manager/home_cubit.dart';
+import '../../source_bar/source_manager/source_cubit.dart';
+import '../../title/title_manager/title_cubit.dart';
 
 class CustomSearchBar extends StatefulWidget {
-  final ArticleViewModel articleViewModel;
   const CustomSearchBar({
     super.key,
-    required this.articleViewModel,
   });
 
   @override
@@ -52,7 +56,7 @@ class _SearchBarState extends State<CustomSearchBar> {
         ),
         AnimatedPositioned(
           top: _height,
-          duration: const Duration(milliseconds: 900),
+          duration: Constants.duration,
           curve: _curve,
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -135,9 +139,12 @@ class _SearchBarState extends State<CustomSearchBar> {
 
   void _search(String content) {
     if (formKey.currentState!.validate()){
+      var articleCubit = context.read<ArticleCubit>();
+      var sourceCubit = context.read<SourceCubit>();
       setState(() {
         valid = true;
-        widget.articleViewModel.fetchArticleList(null, content);
+        articleCubit.fetchArticlesList(null, content);
+        sourceCubit.fetchSourcesList(null, false);
         _close();
       });
     } else {
@@ -148,7 +155,11 @@ class _SearchBarState extends State<CustomSearchBar> {
   }
 
   Future<void> _close() async{
-    await Future.delayed(const Duration(milliseconds: 500)).then((_) {
+    var titleCubit = context.read<TitleCubit>();
+    var homeCubit = context.read<HomeCubit>();
+    await Future.delayed(const Duration(milliseconds: 100)).then((_) {
+      titleCubit.title = content;
+      homeCubit.isSearch = true;
       Navigator.of(context).pop();
     });
   }

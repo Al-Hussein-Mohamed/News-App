@@ -2,13 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart'; // Add the shimmer package
 
-import '../../../utils/utils.dart';
-import '../../../models/article_model.dart';
+import '../../../../utils/utils.dart';
+import '../../../../models/article_model.dart';
 
 class ArticleItemWidget extends StatelessWidget {
   final int idx;
   final Article article;
-  final void Function(int)? articleOnClicked;
+  final void Function(BuildContext, int) articleOnClicked;
   const ArticleItemWidget({
     super.key,
     required this.idx,
@@ -30,7 +30,7 @@ class ArticleItemWidget extends StatelessWidget {
 
       child: InkWell(
 
-        onTap: ()=>articleOnClicked!(idx),
+        onTap: ()=>articleOnClicked(context, idx),
         borderRadius: BorderRadius.circular(12),
         child: Container(
           color: Colors.black.withOpacity(.4),

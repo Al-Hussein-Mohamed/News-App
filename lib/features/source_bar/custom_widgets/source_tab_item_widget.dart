@@ -3,21 +3,21 @@ import 'package:news_app/core/config/color_palette.dart';
 import 'package:news_app/models/source_model.dart';
 import 'package:shimmer/shimmer.dart';
 
-class TabItemWidget extends StatefulWidget {
+class SourceTabItemWidget extends StatefulWidget {
   final Source source;
   final bool isSelected;
 
-  const TabItemWidget({
+  const SourceTabItemWidget({
     super.key,
     required this.source,
     required this.isSelected,
   });
 
   @override
-  State<TabItemWidget> createState() => _TabItemWidgetState();
+  State<SourceTabItemWidget> createState() => _SourceTabItemWidgetState();
 }
 
-class _TabItemWidgetState extends State<TabItemWidget> {
+class _SourceTabItemWidgetState extends State<SourceTabItemWidget> {
   bool _isLoading = true;
 
   @override

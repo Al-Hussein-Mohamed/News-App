@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:news_app/core/config/color_palette.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../../models/category_model.dart';
-import 'category_custom_widget.dart';
+import '../../../../models/category_model.dart';
+import '../custom_widgets/category_custom_widget.dart';
 
 class CategoryBottomSheet extends StatelessWidget {
   void Function(CategoryModel)? categoryOnClicked;

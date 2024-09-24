@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:news_app/core/config/color_palette.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/settings_provider.dart';
-import '../../../models/category_model.dart';
+import '../../../../core/settings_provider.dart';
+import '../../../../models/category_model.dart';
 
 class CategoryCustomWidget extends StatelessWidget {
   int index;

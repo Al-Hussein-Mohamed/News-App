@@ -23,7 +23,6 @@ class _SearchBarState extends State<CustomSearchBar> {
   double _height = -80;
   Curve _curve = Curves.easeOut;
   String content = "";
-  bool _focused = false;
   bool valid = true;
 
   @override
@@ -32,11 +31,6 @@ class _SearchBarState extends State<CustomSearchBar> {
     Future.delayed(const Duration(milliseconds: 1)).then((_) {
       setState(() {
         _height = 50;
-      });
-    });
-    Future.delayed(const Duration(milliseconds: 500)).then((_) {
-      setState(() {
-        _focused = true;
       });
     });
   }
